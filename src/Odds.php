@@ -10,6 +10,8 @@
 
 namespace OddsPHP;
 
+use Exception;
+
 class Odds{
 	private $decimal=null;
 	private $precision=2;
@@ -72,6 +74,11 @@ class Odds{
 				case self::IMPLIED:
 					return $this->set_implied($odd);
 				break;
+				case self::HONGKONG:
+					return $this->set_decimal($odd);
+				break;
+				case self::MALAY:
+					return $this->set_decimal($odd);
 				default:
 					throw new \Exception('Please provide a correct type for set, allowed are: \'decimal\', \'fractional\', \'moneyline\' or \'implied\'.');
 				break;
@@ -115,6 +122,20 @@ class Odds{
 		}
 		return $this;
 	}
+
+	public function set_hongkong($odd){
+		if($odd>null){
+			$this->decimal=$this->hongkong_to_decimal($odd);
+		}
+		return $this;
+	}
+
+	public function set_malay($odd){
+		if($odd>null){
+			$this->decimal=$this->malay_to_decimal($odd);
+		}
+		return $this;
+	}
 	
 	/*
 	 *
@@ -138,8 +159,11 @@ class Odds{
 				case self::IMPLIED:
 					$result = $this->get_implied_probability();
 				break;
+				case self::HONGKONG:
+					$result = $this->get_hongkong();
+				break;
 				default:
-					throw new \Exception('Please provide a correct type for set, allowed are: \'decimal\', \'fractional\' or \'moneyline\'.');
+					throw new \Exception('Please provide a correct type for set, allowed are: \'decimal\', \'fractional\', \'moneyline\', \'hongkong\', \'malay\' or \'indonesian\' .');
 				break;
 			endswitch;
 
@@ -180,6 +204,16 @@ class Odds{
 		return $this->decimal_to_implied_probability($this->decimal);
 	}
 	
+	public function get_hongkong(){
+		$this->odd_not_set_exception();
+		return $this->decimal_to_hongkong($this->decimal);
+	}
+
+	public function get_malay(){
+		$this->odd_not_set_exception();
+		return $this->decimal_to_malay($this->decimal);
+	}
+	
 	/*
 	 *
 	 *
@@ -217,6 +251,27 @@ class Odds{
         }
         return false;
 	}
+
+	private function decimal_to_hongkong($decimal){
+		if($this->is_decimal($decimal)){
+			if($decimal >= 2.00){
+				return $decimal - 1;
+			}else{
+				return -1 / ($decimal - 1);
+			}
+		}
+		return false;
+	}
+
+	private function decimal_to_malay($decimal){
+		if($this->is_decimal($decimal)){
+			return
+		}
+	}
+
+
+
+
 	private function fractional_to_decimal($fractional){
 		if($this->is_fractional($fractional)){
 			$fraction = explode("/", $fractional);
@@ -233,6 +288,16 @@ class Odds{
 			}
 		}
 		return false;
+	}
+
+	private function hongkong_to_decimal($hongkong){
+		if($this->is_decimal($hongkong)){
+			if($hongkong >= 0){
+				return $hongkong + 1;
+			}else{
+				return 1 / abs($hongkong) + 1;
+			}
+		}
 	}
 	 
 	/*
@@ -268,7 +333,11 @@ class Odds{
 		}
 		return false;
 	}
-	
+		
+	private function is_hongkong($odd=NULL){
+		return $this->is_numeric($odd);
+	}
+
 	/*
 	 *
 	 *
