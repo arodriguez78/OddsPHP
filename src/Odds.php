@@ -12,9 +12,10 @@ namespace OddsPHP;
 
 use Exception;
 
-class Odds{
-	private $decimal=null;
-	private $precision=2;
+class Odds
+{
+	private $decimal = null;
+	private $precision = 2;
 
 	const DECIMAL = 'decimal';
 	const FRACTIONAL = 'fractional';
@@ -24,34 +25,36 @@ class Odds{
 	const MALAY = 'malay';
 	const INDONESIAN = 'indonesian';
 
-  	/*
+	/*
 	 *
 	 *
 	 * Constructor.
 	 *
 	 *
-	 */  
-	function __construct(){
-
+	 */
+	function __construct()
+	{
 	}
-    
-    /*
+
+	/*
 	 *
 	 *
 	 * Edit precision.
 	 *
 	 *
 	 */
-    public function set_precision($precision=null){
-        if($precision>null && $this->is_numeric($precision) && $precision>=0){
-            $this->precision = (int)$precision;
+	public function set_precision($precision = null)
+	{
+		if ($precision > null && $this->is_numeric($precision) && $precision >= 0) {
+			$this->precision = (int)$precision;
 		}
 	}
 
-    public function get_current_precision(){
-        return $this->precision;
-    }
-    
+	public function get_current_precision()
+	{
+		return $this->precision;
+	}
+
 	/*
 	 *
 	 *
@@ -59,92 +62,101 @@ class Odds{
 	 *
 	 *
 	 */
-    public function set($type=null, $odd=null){
-        if($type>null && $odd>null){
-			switch($type):
+	public function set($type = null, $odd = null)
+	{
+		if ($type > null && $odd > null) {
+			switch ($type):
 				case self::DECIMAL:
 					return $this->set_decimal($this->parse_float($odd));
-				break;
+					break;
 				case self::FRACTIONAL:
 					return $this->set_fractional($odd);
-				break;
+					break;
 				case self::MONEYLINE:
 					return $this->set_moneyline($odd);
-				break;
+					break;
 				case self::IMPLIED:
 					return $this->set_implied($odd);
-				break;
+					break;
 				case self::HONGKONG:
 					return $this->set_hongkong($odd);
-				break;
+					break;
 				case self::MALAY:
 					return $this->set_malay($odd);
-				break;
+					break;
 				case self::INDONESIAN:
 					return $this->set_indonesian($odd);
-				break;
-				default:	
+					break;
+				default:
 					throw new \Exception('Please provide a correct type for set, allowed are: \'decimal\', \'fractional\', \'moneyline\' or \'implied\'.');
-				break;
+					break;
 			endswitch;
-		}else{
+		} else {
 			throw new \Exception('Please provide a valid odd and type.');
 		}
 		return $this;
-    }
+	}
 
-    public function set_decimal($odd=NULL){
-        if($odd>NULL && $this->is_decimal($odd)){
-            $this->decimal = $odd;
-        }else{
-            throw new \Exception('Provided decimal odd is not correct.');
-		}
-		return $this;
-    }
-
-    public function set_fractional($odd=NULL){
-        if($odd>NULL && $this->is_fractional($odd)){
-            $this->decimal=$this->fractional_to_decimal($odd);
-        }else{
-            throw new \Exception('Provided fractional odd is not correct.');
-		}
-		return $this;
-    }
-
-    public function set_moneyline($odd=NULL){
-        if($odd>NULL && $this->is_moneyline($odd)){
-            $this->decimal=$this->moneyline_to_decimal($odd);
-        }else{
-            throw new \Exception('Provided moneyline odd is not correct.');
+	public function set_decimal($odd = NULL)
+	{
+		if ($odd > NULL && $this->is_decimal($odd)) {
+			$this->decimal = $odd;
+		} else {
+			throw new \Exception('Provided decimal odd is not correct.');
 		}
 		return $this;
 	}
 
-	public function set_implied($odd){
-		if($odd>null){
-            $this->decimal=$this->moneyline_to_decimal($odd);
+	public function set_fractional($odd = NULL)
+	{
+		if ($odd > NULL && $this->is_fractional($odd)) {
+			$this->decimal = $this->fractional_to_decimal($odd);
+		} else {
+			throw new \Exception('Provided fractional odd is not correct.');
 		}
 		return $this;
 	}
 
-	public function set_hongkong($odd){
-		if($odd>null){
-			$this->decimal=$this->hongkong_to_decimal($odd);
+	public function set_moneyline($odd = NULL)
+	{
+		if ($odd > NULL && $this->is_moneyline($odd)) {
+			$this->decimal = $this->moneyline_to_decimal($odd);
+		} else {
+			throw new \Exception('Provided moneyline odd is not correct.');
 		}
 		return $this;
 	}
 
-	public function set_malay($odd){
-		if($odd>null){
-			$this->decimal=$this->malay_to_decimal($odd);
+	public function set_implied($odd)
+	{
+		if ($odd > null) {
+			$this->decimal = $this->moneyline_to_decimal($odd);
 		}
 		return $this;
 	}
-	
-	public function set_indonesian($odd){
-		if($odd>null){
-			$this->decimal=$this->indonesian_to_decimal($odd);
+
+	public function set_hongkong($odd)
+	{
+		if ($odd > null) {
+			$this->decimal = $this->hongkong_to_decimal($odd);
 		}
+		return $this;
+	}
+
+	public function set_malay($odd)
+	{
+		if ($odd > null) {
+			$this->decimal = $this->malay_to_decimal($odd);
+		}
+		return $this;
+	}
+
+	public function set_indonesian($odd)
+	{
+		if ($odd > null) {
+			$this->decimal = $this->indonesian_to_decimal($odd);
+		}
+		return $this;
 	}
 
 
@@ -154,88 +166,98 @@ class Odds{
 	 * Returns the odd in the chosen format.
 	 *
 	 *
-	 */   
-	public function get($type=null){
-        if($type>null){
-			switch($type):
+	 */
+	public function get($type = null)
+	{
+		if ($type > null) {
+			switch ($type):
 				case self::DECIMAL:
 					$result = $this->get_decimal();
-				break;
+					break;
 				case self::FRACTIONAL:
 					$result = $this->get_fractional();
-				break;
+					break;
 				case self::MONEYLINE:
 					$result = $this->get_moneyline();
-				break;
+					break;
 				case self::IMPLIED:
 					$result = $this->get_implied_probability();
-				break;
+					break;
 				case self::HONGKONG:
 					$result = $this->get_hongkong();
-				break;
+					break;
 				case self::MALAY:
 					$result = $this->get_malay();
-				break;
+					break;
 				case self::INDONESIAN:
 					$result = $this->get_indonesian();
-				break;
+					break;
 				default:
 					throw new \Exception('Please provide a correct type for set, allowed are: \'decimal\', \'fractional\', \'moneyline\', \'hongkong\', \'malay\' or \'indonesian\' .');
-				break;
+					break;
 			endswitch;
 
-			if(isset($result) && $result){
+			if (isset($result) && $result) {
 				return $result;
 			}
-		}else{
+		} else {
 			throw new \Exception('Please provide a valid odd and type.');
 		}
 		return ""; // Null result.
 	}
 
-	public function reduce(){
+	public function reduce()
+	{
 		return $this->get(self::FRACTIONAL);
 	}
 
-	private function odd_not_set_exception(){
-		if($this->decimal==null){
+	private function odd_not_set_exception()
+	{
+		if ($this->decimal == null) {
 			throw new \Exception('Please provide a valid odd first.');
-		} 
+		}
 	}
-	
-	public function get_decimal(){
+
+	public function get_decimal()
+	{
 		$this->odd_not_set_exception();
 		$decimal = (float)($this->decimal);
 		return (float)($this->decimal);
 	}
-	public function get_moneyline(){
-        $this->odd_not_set_exception();
+	public function get_moneyline()
+	{
+		$this->odd_not_set_exception();
 		return (float)round($this->decimal_to_moneyline($this->decimal));
 	}
-	public function get_fractional(){
-		$this->odd_not_set_exception(); 
+	public function get_fractional()
+	{
+		$this->odd_not_set_exception();
 		return (string)$this->decimal_to_fraction($this->decimal);
 	}
-	public function get_implied_probability(){
-        $this->odd_not_set_exception();
+	public function get_implied_probability()
+	{
+		$this->odd_not_set_exception();
 		return $this->decimal_to_implied_probability($this->decimal);
 	}
-	
-	public function get_hongkong(){
+
+	public function get_hongkong()
+	{
 		$this->odd_not_set_exception();
 		return $this->decimal_to_hongkong($this->decimal);
 	}
 
-	public function get_malay(){
+	public function get_malay()
+	{
 		$this->odd_not_set_exception();
 		return $this->decimal_to_malay($this->decimal);
 	}
-	
-	public function get_indonesian(){
+
+	public function get_indonesian()
+	{
 		$this->odd_not_set_exception();
 		return $this->decimal_to_indonesian($this->decimal);
 	}
-	
+
 	/*
 	 *
 	 *
@@ -243,41 +265,45 @@ class Odds{
 	 *
 	 *
 	 */
-	private function decimal_to_implied_probability($decimal){
-		if($this->is_decimal($decimal)){
-			return round(1/(float)$decimal*100, $this->precision);	
+	private function decimal_to_implied_probability($decimal)
+	{
+		if ($this->is_decimal($decimal)) {
+			return round(1 / (float)$decimal * 100, $this->precision);
 		}
 		return false;
 	}
-	private function decimal_to_moneyline($decimal){
+	private function decimal_to_moneyline($decimal)
+	{
 		// https://www.pinnacle.com/en/betting-articles/educational/converting-between-american-and-decimal-odds/PBS2VKQZ7ZB5TZDB
-		try{
-			if($this->is_decimal($decimal)){
-				if($decimal>=2.00){
-					return ($decimal-1)*100;
-				}else{
-					if($decimal-1 == 0) return 0;
-					return (-100)/($decimal-1);
+		try {
+			if ($this->is_decimal($decimal)) {
+				if ($decimal >= 2.00) {
+					return ($decimal - 1) * 100;
+				} else {
+					if ($decimal - 1 == 0) return 0;
+					return (-100) / ($decimal - 1);
 				}
 			}
-		}catch(Exception $ex){
+		} catch (Exception $ex) {
 			return false;
 		}
 		return false;
 	}
-	private function decimal_to_fraction($dec){
-		if($this->is_decimal($dec)){
+	private function decimal_to_fraction($dec)
+	{
+		if ($this->is_decimal($dec)) {
 			$dec = number_format($dec, $this->precision);
-            $reduced = $this->reduce_fraction(round(($dec-1)*100), round(100));
-            return $reduced[0]."/".$reduced[1];
-        }
-        return false;
+			$reduced = $this->reduce_fraction(round(($dec - 1) * 100), round(100));
+			return $reduced[0] . "/" . $reduced[1];
+		}
+		return false;
 	}
 
-	private function decimal_to_hongkong($decimal){
-		if($this->is_decimal($decimal)){
+	private function decimal_to_hongkong($decimal)
+	{
+		if ($this->is_decimal($decimal)) {
 			$result = $decimal - 1;
-			if($result >= 0){
+			if ($result >= 0) {
 				return $result;
 			} else {
 				return 0;
@@ -286,16 +312,26 @@ class Odds{
 		return false;
 	}
 
-	private function decimal_to_malay($decimal) {
+	private function decimal_to_malay($decimal)
+	{
 		if ($this->is_decimal($decimal)) {
-			return ($decimal == 2.0) ? 1.0 : (-1) / ($decimal - 1);
+			if ($decimal == 2.0) {
+				return 1.0;
+			} elseif ($decimal == -2.0) {
+				return 1.0;
+			} elseif ($decimal > 0) {
+				return (-1) / ($decimal - 1);
+			} else {
+				return (1) / ($decimal + 1);
+			}
 		} else {
 			return $decimal - 1;
 		}
 	}
-	
 
-	private function decimal_to_indonesian($decimal) {
+
+	private function decimal_to_indonesian($decimal)
+	{
 		if ($this->is_decimal($decimal)) {
 			return $decimal - 1;
 		}
@@ -303,51 +339,56 @@ class Odds{
 	}
 
 
-	private function fractional_to_decimal($fractional){
-		if($this->is_fractional($fractional)){
+	private function fractional_to_decimal($fractional)
+	{
+		if ($this->is_fractional($fractional)) {
 			$fraction = explode("/", $fractional);
-			return $fraction[0]/$fraction[1]+1.00;
+			return $fraction[0] / $fraction[1] + 1.00;
 		}
 		return false;
 	}
-	private function moneyline_to_decimal($moneyline){
-		if($this->is_moneyline($moneyline)){
-			if($moneyline>0){
-				return $moneyline/100+1;
-			}else{
-				return abs($moneyline)/100+1;
+	private function moneyline_to_decimal($moneyline)
+	{
+		if ($this->is_moneyline($moneyline)) {
+			if ($moneyline > 0) {
+				return $moneyline / 100 + 1;
+			} else {
+				return abs($moneyline) / 100 + 1;
 			}
 		}
 		return false;
 	}
 
-	private function hongkong_to_decimal($hongkong){
-		if($this->is_decimal($hongkong)){
-			if($hongkong >= 0){
+	private function hongkong_to_decimal($hongkong)
+	{
+		if ($this->is_decimal($hongkong)) {
+			if ($hongkong >= 0) {
 				return $hongkong * 1 + 1;
-			}else{
+			} else {
 				return 1 / (abs($hongkong) + 1);
 			}
 		}
 		return false;
 	}
 
-	private function malay_to_decimal($malay) {
+	private function malay_to_decimal($malay)
+	{
 		if ($this->is_decimal($malay) && abs($malay) <= 1) {
 			return ($malay > 0) ? ($malay + 1) : (1 / abs($malay) + 1);
 		} else {
 			return 'NaN';
 		}
 	}
-	
 
-	private function indonesian_to_decimal($indonesian) {
-		if($this->is_decimal($indonesian)) {
-			return $indonesian / 100 + 1;
+
+	private function indonesian_to_decimal($indonesian)
+	{
+		if ($this->is_decimal($indonesian)) {
+			return $indonesian + 1;
 		}
 		return false;
 	}
-	 
+
 	/*
 	 *
 	 *
@@ -361,21 +402,25 @@ class Odds{
 	 *
 	 *
 	 */
-	private function is_decimal($odds){
+	private function is_decimal($odds)
+	{
 		return ($this->has_decimal_part($odds) || is_numeric($odds));
 	}
-    private function has_decimal_part($odds){
-        return (is_numeric($odds) && floor($odds) != $odds);
-    }
-	private function is_moneyline($odd=NULL){
+	private function has_decimal_part($odds)
+	{
+		return (is_numeric($odds) && floor($odds) != $odds);
+	}
+	private function is_moneyline($odd = NULL)
+	{
 		return $this->is_numeric(abs($odd));
 	}
-	private function is_fractional($odds){
-		if(strpos($odds, "/") !== FALSE){
+	private function is_fractional($odds)
+	{
+		if (strpos($odds, "/") !== FALSE) {
 			$fraction = explode("/", $odds);
-			if(!empty($fraction) && count($fraction) == 2){
-				foreach($fraction as $number){
-					if(!ctype_digit($number)){
+			if (!empty($fraction) && count($fraction) == 2) {
+				foreach ($fraction as $number) {
+					if (!ctype_digit($number)) {
 						return false;
 					}
 				}
@@ -384,7 +429,7 @@ class Odds{
 		}
 		return false;
 	}
-	
+
 
 
 	/*
@@ -394,14 +439,16 @@ class Odds{
 	 *
 	 *
 	 */
-	private function reduce_fraction($a, $b){
+	private function reduce_fraction($a, $b)
+	{
 		$gcd = $this->gcd($a, $b);
-	  	return [$a/$gcd, $b/$gcd];
+		return [$a / $gcd, $b / $gcd];
 	}
-	private function gcd($a, $b) {
-		return ( $a % $b ) ? $this->gcd( $b, $a % $b ) : $b;
+	private function gcd($a, $b)
+	{
+		return ($a % $b) ? $this->gcd($b, $a % $b) : $b;
 	}
-	
+
 	/*
 	 *
 	 *
@@ -409,17 +456,18 @@ class Odds{
 	 *
 	 *
 	 */
-	public function is_valid_format($format=NULL): bool{
-		return (is_string($format) && ($format===$this::DECIMAL || $format===$this::FRACTIONAL || $format===$this::MONEYLINE || $format===$this::IMPLIED));
+	public function is_valid_format($format = NULL): bool
+	{
+		return (is_string($format) && ($format === $this::DECIMAL || $format === $this::FRACTIONAL || $format === $this::MONEYLINE || $format === $this::IMPLIED));
 	}
 
-	private function is_numeric($value){
+	private function is_numeric($value)
+	{
 		return preg_match('/^[0-9]+$/i', $value);
 	}
-	
-	private function parse_float($value=0.0){
+
+	private function parse_float($value = 0.0)
+	{
 		return floatval(preg_replace('/\.(?=.*\.)/', '', str_replace(",", ".", $value)));
 	}
-
 }
-?>
