@@ -75,11 +75,15 @@ class Odds{
 					return $this->set_implied($odd);
 				break;
 				case self::HONGKONG:
-					return $this->set_decimal($odd);
+					return $this->set_hongkong($odd);
 				break;
 				case self::MALAY:
-					return $this->set_decimal($odd);
-				default:
+					return $this->set_malay($odd);
+				break;
+				case self::INDONESIAN:
+					return $this->set_indonesian($odd);
+				break;
+				default:	
 					throw new \Exception('Please provide a correct type for set, allowed are: \'decimal\', \'fractional\', \'moneyline\' or \'implied\'.');
 				break;
 			endswitch;
@@ -137,6 +141,13 @@ class Odds{
 		return $this;
 	}
 	
+	public function set_indonesian($odd){
+		if($odd>null){
+			$this->decimal=$this->indonesian_to_decimal($odd);
+		}
+	}
+
+
 	/*
 	 *
 	 *
@@ -161,6 +172,12 @@ class Odds{
 				break;
 				case self::HONGKONG:
 					$result = $this->get_hongkong();
+				break;
+				case self::MALAY:
+					$result = $this->get_malay();
+				break;
+				case self::INDONESIAN:
+					$result = $this->get_indonesian();
 				break;
 				default:
 					throw new \Exception('Please provide a correct type for set, allowed are: \'decimal\', \'fractional\', \'moneyline\', \'hongkong\', \'malay\' or \'indonesian\' .');
@@ -214,6 +231,11 @@ class Odds{
 		return $this->decimal_to_malay($this->decimal);
 	}
 	
+	public function get_indonesian(){
+		$this->odd_not_set_exception();
+		return $this->decimal_to_indonesian($this->decimal);
+	}
+	
 	/*
 	 *
 	 *
@@ -254,22 +276,31 @@ class Odds{
 
 	private function decimal_to_hongkong($decimal){
 		if($this->is_decimal($decimal)){
-			if($decimal >= 2.00){
-				return $decimal - 1;
-			}else{
-				return -1 / ($decimal - 1);
+			$result = $decimal - 1;
+			if($result >= 0){
+				return $result;
+			} else {
+				return 0;
 			}
 		}
 		return false;
 	}
 
-	private function decimal_to_malay($decimal){
-		if($this->is_decimal($decimal)){
-			return
+	private function decimal_to_malay($decimal) {
+		if ($this->is_decimal($decimal)) {
+			return ($decimal == 2.0) ? 1.0 : (-1) / ($decimal - 1);
+		} else {
+			return $decimal - 1;
 		}
 	}
+	
 
-
+	private function decimal_to_indonesian($decimal) {
+		if ($this->is_decimal($decimal)) {
+			return $decimal - 1;
+		}
+		return false;
+	}
 
 
 	private function fractional_to_decimal($fractional){
@@ -293,11 +324,28 @@ class Odds{
 	private function hongkong_to_decimal($hongkong){
 		if($this->is_decimal($hongkong)){
 			if($hongkong >= 0){
-				return $hongkong + 1;
+				return $hongkong * 1 + 1;
 			}else{
-				return 1 / abs($hongkong) + 1;
+				return 1 / (abs($hongkong) + 1);
 			}
 		}
+		return false;
+	}
+
+	private function malay_to_decimal($malay) {
+		if ($this->is_decimal($malay) && abs($malay) <= 1) {
+			return ($malay > 0) ? ($malay + 1) : (1 / abs($malay) + 1);
+		} else {
+			return 'NaN';
+		}
+	}
+	
+
+	private function indonesian_to_decimal($indonesian) {
+		if($this->is_decimal($indonesian)) {
+			return $indonesian / 100 + 1;
+		}
+		return false;
 	}
 	 
 	/*
@@ -307,6 +355,9 @@ class Odds{
 	 * - Decimal
 	 * - Fractional
 	 * - Moneyline (US)
+	 * - HongKong
+	 * - Malay
+	 * - Indonesian
 	 *
 	 *
 	 */
@@ -333,10 +384,8 @@ class Odds{
 		}
 		return false;
 	}
-		
-	private function is_hongkong($odd=NULL){
-		return $this->is_numeric($odd);
-	}
+	
+
 
 	/*
 	 *
@@ -371,5 +420,6 @@ class Odds{
 	private function parse_float($value=0.0){
 		return floatval(preg_replace('/\.(?=.*\.)/', '', str_replace(",", ".", $value)));
 	}
+
 }
 ?>

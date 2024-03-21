@@ -49,5 +49,32 @@ print "125 to decimal:\n".$odd->set('moneyline', '125')->get('decimal')."\n".PHP
 
 // Fractional to moneyline
 print "11/20 to moneyline: ".$odd->set('fractional', '11/20')->get('moneyline')."\n".PHP_EOL;
+
+
+//Convert decimal to hongkong
+print "5 to hongkong:\n".$odd->set('decimal', 5)->get('hongkong')."\n".PHP_EOL;
+
+print "1.55 to hongkong:\n".$odd->set('decimal', 1)->get('hongkong')."\n".PHP_EOL;
+
+//Convert Hongkong to decimal
+print "0.2 to decimal:\n".$odd->set('hongkong', 0.2)->get('decimal')."\n".PHP_EOL;
+
+
+//Convert decimal to malay
+print "5 to malay:\n".$odd->set('decimal', 2)->get('malay')."\n".PHP_EOL;
+
+//Convert malay to decimal
+print "0.2 to decimal:\n".$odd->set('malay', 1)->get('decimal')."\n".PHP_EOL;
+
+//Convert decimal to indonesian
+print "5 to indonesian:\n".$odd->set('decimal', 5)->get('indonesian')."\n".PHP_EOL;
+
+//Convert indonesian to decimal
+print "2 to decimal:\n".$odd->set('indonesian', 1)->get('decimal')."\n".PHP_EOL;
+
+
+print "Calculate implied probability:\n".$odd->set('decimal', 3)->get('implied')."%\n".PHP_EOL;
+
 exit("Test completed!");
+
 ?>
